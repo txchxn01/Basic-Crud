@@ -67,9 +67,14 @@ ul {
 }
 
 .button-18:hover,
-.button-18:focus,.button-19:hover,
-.button-19:focus { 
+.button-18:focus{ 
   background-color: #16437E;
+  color: #ffffff;
+}
+
+.button-19:hover,
+.button-19:focus{
+    background-color: #840000;
   color: #ffffff;
 }
 

@@ -4,12 +4,19 @@ const cors = require("cors");
 
 const app = express();
 const PORT = 3000;
+const session = require('express-session');
+
+app.use(session({
+    secret: 'yourSecretKey',
+    resave: false,
+    saveUninitialized: true,
+}));
 
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static("public"));
 
-let songs = [
+let song = [
   {
     songid: "1",
     song: "Homesick",
@@ -62,31 +69,55 @@ let songs = [
   },
 ];
 
-// Get all songs
-app.get("/api/songs", (req, res) => {
-  res.json(songs);
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+    
+    if (username === 'admin' && password === 'password') {
+        req.session.user = username;
+        res.json({ message: 'Login successful' });
+    } else {
+        res.status(401).json({ message: 'Invalid credentials' });
+    }
 });
 
-// Create a new song
-app.post("/api/songs", (req, res) => {
-  const newSong = req.body;
-  songs.push(newSong);
-  res.status(201).json(newSong);
+app.post('/logout', (req, res) => {
+  req.session.destroy((err) => {
+      if (err) {
+          return res.status(500).json({ message: 'Logout failed' });
+      }
+      res.json({ message: 'Logout successful' });
+  });
 });
 
-// Update a song
-app.put("/api/songs/:id", (req, res) => {
-  const { id } = req.params;
-  const updatedSong = req.body;
-  songs = songs.map((song) => (song.songid === id ? updatedSong : song));
-  res.json(updatedSong);
+function isAuthenticated(req, res, next) {
+    if (req.session.user) {
+        return next();
+    } else {
+        res.status(403).json({ message: 'You must be logged in to perform this action' });
+        alert("Please login");
+    }
+}
+app.get('/api/song', (req, res) => {
+  res.json(song);
+});
+app.post("/api/songs", isAuthenticated, (req, res) => {
+    const newSong = req.body;
+    song.push(newSong);
+    res.status(201).json(newSong);
+});
+
+app.put("/api/songs/:id", isAuthenticated, (req, res) => {
+    const { id } = req.params;
+    const updatedSong = req.body;
+    song = song.map((song) => (song.songid === id ? updatedSong : song));
+    res.json(updatedSong);
 });
 
 // Delete a song
-app.delete("/api/songs/:id", (req, res) => {
-  const { id } = req.params;
-  songs = songs.filter((song) => song.songid !== id);
-  res.status(204).send();
+app.delete("/api/songs/:id", isAuthenticated, (req, res) => {
+    const { id } = req.params;
+    song = song.filter((song) => song.songid !== id);
+    res.status(204).send();
 });
 
 app.listen(PORT, () => {

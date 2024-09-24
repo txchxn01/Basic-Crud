@@ -2,7 +2,7 @@ const songForm = document.getElementById('songForm');
 const songList = document.getElementById('songList');
 
 const fetchSongs = async () => {
-    const response = await fetch('http://localhost:3000/api/songs');
+    const response = await fetch('http://localhost:3000/api/song');
     const songs = await response.json();
     songList.innerHTML = songs.map(song => `
         <div>
@@ -16,17 +16,27 @@ const fetchSongs = async () => {
 };
 
 const addSong = async (song) => {
-    await fetch('http://localhost:3000/api/songs', {
+    const response = await fetch('http://localhost:3000/api/songs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(song)
     });
-    fetchSongs();
+
+    if (response.status === 403) {
+        alert("Please login to add a song.");
+    } else {
+        fetchSongs();
+    }
 };
 
 const deleteSong = async (id) => {
-    await fetch(`http://localhost:3000/api/songs/${id}`, { method: 'DELETE' });
-    fetchSongs();
+    const response = await fetch(`http://localhost:3000/api/songs/${id}`, { method: 'DELETE' });
+
+    if (response.status === 403) {
+        alert("Please login to delete a song.");
+    } else {
+        fetchSongs();
+    }
 };
 
 const editSong = (id, songName, bandName) => {
@@ -40,14 +50,19 @@ const editSong = (id, songName, bandName) => {
             song: document.getElementById('song').value,
             band: document.getElementById('band').value
         };
-        await fetch(`http://localhost:3000/api/songs/${id}`, {
+        const response = await fetch(`http://localhost:3000/api/songs/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updatedSong)
         });
-        fetchSongs();
-        songForm.reset();
-        songForm.onsubmit = handleAddSong;
+
+        if (response.status === 403) {
+            alert("Please login to edit a song.");
+        } else {
+            fetchSongs();
+            songForm.reset();
+            songForm.onsubmit = handleAddSong;
+        }
     };
 };
 
