@@ -5,11 +5,13 @@ const fetchSongs = async () => {
     const response = await fetch('http://localhost:3000/api/songs');
     const songs = await response.json();
     songList.innerHTML = songs.map(song => `
-        <li>
-            ${song.song} by ${song.band}
-            <button onclick="deleteSong('${song.songid}')">Delete</button>
-            <button onclick="editSong('${song.songid}', '${song.song}', '${song.band}')">Edit</button>
-        </li>
+        <div>
+           <div class="fon "> ${song.song} by ${song.band}</div>
+            <div class="con">
+            <button class="button-19" onclick="deleteSong('${song.songid}')">Delete</button>
+            <button  class="button-18" onclick="editSong('${song.songid}', '${song.song}', '${song.band}')">Edit</button>
+            </div>
+        </div>
     `).join('');
 };
 
