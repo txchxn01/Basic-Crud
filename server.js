@@ -72,7 +72,7 @@ let song = [
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
     
-    if (username === 'admin' && password === 'password') {
+    if (username === 'admin' && password === '1234') {
         req.session.user = username;
         res.json({ message: 'Login successful' });
     } else {
@@ -113,7 +113,6 @@ app.put("/api/songs/:id", isAuthenticated, (req, res) => {
     res.json(updatedSong);
 });
 
-// Delete a song
 app.delete("/api/songs/:id", isAuthenticated, (req, res) => {
     const { id } = req.params;
     song = song.filter((song) => song.songid !== id);

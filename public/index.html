@@ -27,7 +27,6 @@
     const loginForm = document.getElementById('loginForm');
     const logoutButton = document.getElementById('logoutButton');
 
-    // ฟังก์ชันสำหรับล็อกอิน
     loginForm.onsubmit = async (e) => {
         e.preventDefault();
         const username = document.getElementById('username').value;
@@ -45,8 +44,6 @@
             alert('Login failed');
         }
     };
-
-    // ฟังก์ชันสำหรับล็อกเอาต์
     logoutButton.onclick = async () => {
         const response = await fetch('http://localhost:3000/logout', {
             method: 'POST',
